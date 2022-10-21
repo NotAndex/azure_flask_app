@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, send_from_
 from pathlib import Path
 
 app = Flask(__name__)
-p = Path("/")
+p = Path("/mnt")
 L = [x for x in p.iterdir() if x.is_dir()]
 
 
