@@ -7,7 +7,9 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello_world():
-    return f"<p>CWD = {Path.cwd()} Home = {Path.home()}</p>"
+    p = Path("/")
+    l = [x for x in p.iterdir() if x.is_dir()]
+    return f"<p>CWD = {l}</p>"
 
 
 # @app.route("/")
