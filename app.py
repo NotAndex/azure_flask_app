@@ -3,13 +3,14 @@ from flask import Flask, render_template, request, redirect, url_for, send_from_
 from pathlib import Path
 
 app = Flask(__name__)
+p = Path("/")
+L = [x for x in p.iterdir() if x.is_dir()]
 
 
 @app.route("/")
 def hello_world():
-    p = Path("/")
-    l = [x for x in p.iterdir() if x.is_dir()]
-    return f"<p>CWD = {l}</p>"
+
+    return f"<p>CWD = {L}</p>"
 
 
 # @app.route("/")
