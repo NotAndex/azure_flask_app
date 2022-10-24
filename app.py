@@ -32,7 +32,7 @@ def gen(path_string: str):
         print("Do nothing")
 
 
-@app.route("/slideshow'")
+@app.route("/slideshow")
 def slideshow():
     return Response(gen("/mnt/flask"), mimetype="multipart/x-mixed-replace; boundary=frame")
     # return Response(gen(r"C:\Users\Andreas\Pictures\flask"), mimetype="multipart/x-mixed-replace; boundary=frame")
