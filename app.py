@@ -5,7 +5,7 @@ import time
 from io import BytesIO
 import time
 from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler, DirCreatedEvent, FileCreatedEvent
+from watchdog.events import FileSystemEventHandler, DirCreatedEvent, FileCreatedEvent, FileSystemMovedEvent
 
 app = Flask(__name__)
 
@@ -18,7 +18,7 @@ class CustomHandler(FileSystemEventHandler):
         self.path_strings = []
 
     # callback for File/Directory created event, called by Observer.
-    def on_created(self, event: FileCreatedEvent):
+    def on_created(self, event: FileSystemMovedEvent):
 
         self.path_strings.append(Path(event.src_path).as_posix())
 
@@ -41,7 +41,7 @@ def main():
 
     try:
         while True:
-            time.sleep(1)
+            time.sleep(10)
             print(f"Image to yield == {len(handler.path_strings)} Time: {datetime.now()}")
             if len(handler.path_strings):
                 im = open(handler.path_strings.pop(), "rb").read()
@@ -50,12 +50,12 @@ def main():
                 #     print(f"loop: {i}")
                 yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
                 yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
-            else:
-                im = open("/mnt/flask/inception.png", "rb").read()
-                # for i in range(2):  # IDK why this double yield is needed
-                #     print(f"loop: {i}")
-                yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
-                yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
+            # else:
+            #     im = open("/mnt/flask/inception.png", "rb").read()
+            #     # for i in range(2):  # IDK why this double yield is needed
+            #     #     print(f"loop: {i}")
+            #     yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
+            #     yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
 
     except KeyboardInterrupt:
         observer.stop()
