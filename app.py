@@ -20,7 +20,7 @@ def gen(path_string: str):
         yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
         idx += 1
 
-        if idx == len(img_list) - 1:
+        if idx == len(img_list):
             idx = 0
 
 
