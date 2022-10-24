@@ -16,7 +16,7 @@ def gen(path_string: str):
         time.sleep(15)
 
         im = open(img_list[idx], "rb").read()
-        yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
+        yield (b"--frame\r\n" b"Content-Type: image/png\r\n\r\n" + im + b"\r\n")
         # yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
         idx += 1
 
