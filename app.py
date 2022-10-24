@@ -41,8 +41,8 @@ def main():
 
     try:
         while True:
-            time.sleep(5)
-            print(f"Image to yield == {len(handler.path_strings)}")
+            time.sleep(1)
+            print(f"Image to yield == {len(handler.path_strings)} Time: {datetime.now()}")
             if len(handler.path_strings):
                 im = open(handler.path_strings.pop(), "rb").read()
                 print(f"After read {handler.path_strings}")
