@@ -17,6 +17,9 @@ def get_max_file(path_string: str):
 
 def gen(path_string: str):
     max_file = get_max_file(path_string)
+    img = open(max_file, "rb").read()
+    yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + img + b"\r\n")
+    yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + img + b"\r\n")
 
     while True:
         time.sleep(5)
