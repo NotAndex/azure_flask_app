@@ -51,7 +51,7 @@ def main():
                 yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
                 yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
             else:
-                im = open("mnt/flask/inception.png", "rb").read()
+                im = open("/mnt/flask/inception.png", "rb").read()
                 # for i in range(2):  # IDK why this double yield is needed
                 #     print(f"loop: {i}")
                 yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
