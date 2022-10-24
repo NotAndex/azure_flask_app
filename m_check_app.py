@@ -9,22 +9,28 @@ import os.path
 app = Flask(__name__)
 
 
+def get_max_file(path_string: str):
+    folder_path = Path(path_string)
+    files = list(folder_path.glob("*.png"))
+    return max(files, key=os.path.getmtime)
+
+
 def gen(path_string: str):
-    idx = 0
+    max_file = get_max_file(path_string)
+    img = open(max_file, "rb").read()
+    yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + img + b"\r\n")
+    yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + img + b"\r\n")
 
     while True:
-        time.sleep(15)
+        time.sleep(5)
+        curr_max_file = get_max_file(path_string)
+        if max_file != curr_max_file:
+            print(f"OLD: {max_file} --- NEW: {curr_max_file}")
 
-        if idx == 0:
-            im = open("/mnt/flask/inception.png", "rb").read()
+            im = open(curr_max_file, "rb").read()
             yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
             yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
-            idx += 1
-        if idx == 1:
-            im = open("/mnt/flask/adf_drawio.png", "rb").read()
-            yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
-            yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
-            idx -= 1
+            max_file = curr_max_file
 
         print("Do nothing")
 
