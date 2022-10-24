@@ -12,7 +12,7 @@ app = Flask(__name__)
 def get_max_file(path_string: str):
     folder_path = Path(path_string)
     files = list(folder_path.glob("*.png"))
-    return max(files, key=os.path.getctime)
+    return max(files, key=os.path.getmtime)
 
 
 def gen(path_string: str):
