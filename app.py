@@ -2,75 +2,45 @@ from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, Response
 from pathlib import Path
 import time
-from io import BytesIO
 import time
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler, DirCreatedEvent, FileCreatedEvent, FileSystemMovedEvent
+import os.path
+
 
 app = Flask(__name__)
 
 
-class CustomHandler(FileSystemEventHandler):
-    """Custom handler for Watchdog"""
-
-    def __init__(self):
-        # List to store path
-        self.path_strings = []
-
-    # callback for File/Directory created event, called by Observer.
-    def on_created(self, event: FileSystemMovedEvent):
-
-        self.path_strings.append(Path(event.src_path).as_posix())
-
-        print(f"Path content: \n{self.path_strings}")
+def get_max_file(path_string: str):
+    folder_path = Path(path_string)
+    files = list(folder_path.glob("*.png"))
+    return max(files, key=os.path.getctime)
 
 
-def main():
-    # get current path as absolute, linux-style path.
-    working_path = Path("/mnt/flask").as_posix()
-    # working_path = Path(r"C:\Users\Andreas\Pictures\GitHub-Mark\PNG").as_posix()
+def gen(path_string: str):
+    max_file = get_max_file(path_string)
 
-    # create instance of observer and CustomHandler
-    observer = Observer()
-    handler = CustomHandler()
+    while True:
+        time.sleep(5)
+        curr_max_file = get_max_file(path_string)
+        if max_file != curr_max_file:
+            print(f"OLD: {max_file} --- NEW: {curr_max_file}")
 
-    # start observer, checks files recursively
-    observer.schedule(handler, path=working_path, recursive=False)
-    observer.start()
-    print("observer started")
+            im = open(curr_max_file, "rb").read()
+            yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
+            yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
+            max_file = curr_max_file
 
-    try:
-        while True:
-            time.sleep(10)
-            print(f"Image to yield == {len(handler.path_strings)} Time: {datetime.now()}")
-            if len(handler.path_strings):
-                im = open(handler.path_strings.pop(), "rb").read()
-                print(f"After read {handler.path_strings}")
-                # for i in range(2):  # IDK why this double yield is needed
-                #     print(f"loop: {i}")
-                yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
-                yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
-            # else:
-            #     im = open("/mnt/flask/inception.png", "rb").read()
-            #     # for i in range(2):  # IDK why this double yield is needed
-            #     #     print(f"loop: {i}")
-            #     yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
-            #     yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
-
-    except KeyboardInterrupt:
-        observer.stop()
-    observer.join()
-
-
-@app.route("/slideshow")
-def slideshow():
-
-    return Response(main(), mimetype="multipart/x-mixed-replace; boundary=frame")
+        print("Do nothing")
 
 
 @app.route("/")
-def index():
-    return "<html><head></head><body><h1>slideshow</h1><img src='/slideshow' style='width: 90%; height: 90%;'/>" "</body></html>"
+def test():
+    return Response(gen("/mnt/flask"), mimetype="multipart/x-mixed-replace; boundary=frame")
+    # return Response(gen(r"C:\Users\Andreas\Pictures\flask"), mimetype="multipart/x-mixed-replace; boundary=frame")
+
+
+# @app.route("/")
+# def index():
+#     return "<html><head></head><body><h1>slideshow</h1><img src='/slideshow' style='width: 90%; height: 90%;'/>" "</body></html>"
 
 
 if __name__ == "__main__":
