@@ -27,7 +27,8 @@ class CustomHandler(FileSystemEventHandler):
 
 def main():
     # get current path as absolute, linux-style path.
-    working_path = Path("/mnt/flask").as_posix()
+    # working_path = Path("/mnt/flask").as_posix()
+    working_path = Path(r"C:\Users\Andreas\Pictures\GitHub-Mark\PNG").as_posix()
 
     # create instance of observer and CustomHandler
     observer = Observer()
@@ -40,14 +41,15 @@ def main():
 
     try:
         while True:
-            time.sleep(20)
+            time.sleep(5)
             print(f"Image to yield == {len(handler.path_strings)}")
             if len(handler.path_strings):
                 im = open(handler.path_strings.pop(), "rb").read()
                 print(f"After read {handler.path_strings}")
-                for i in range(2):  # IDK why this double yield is needed
-                    print(f"loop: {i}")
-                    yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
+                # for i in range(2):  # IDK why this double yield is needed
+                #     print(f"loop: {i}")
+                yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
+                yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
 
     except KeyboardInterrupt:
         observer.stop()
