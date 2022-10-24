@@ -10,21 +10,18 @@ app = Flask(__name__)
 
 
 def gen(path_string: str):
+    img_list = ["/mnt/flask/inception.png", "/mnt/flask/adf_drawio.png"]
     idx = 0
-
     while True:
-
-        if idx == 0:
-            im = open("/mnt/flask/inception.png", "rb").read()
-            yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
-            yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
-            idx += 1
         time.sleep(15)
-        if idx == 1:
-            im = open("/mnt/flask/adf_drawio.png", "rb").read()
-            yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
-            yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
-            idx -= 1
+
+        im = open(img_list[idx], "rb").read()
+        yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
+        yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
+        idx += 1
+
+        if idx == len(img_list) - 1:
+            idx = 0
 
 
 @app.route("/slideshow")
