@@ -36,6 +36,7 @@ def main():
     # start observer, checks files recursively
     observer.schedule(handler, path=working_path, recursive=False)
     observer.start()
+    print("observer started")
 
     try:
         while True:
