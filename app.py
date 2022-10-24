@@ -13,20 +13,16 @@ def gen(path_string: str):
     idx = 0
 
     while True:
-        time.sleep(15)
 
         if idx == 0:
             im = open("/mnt/flask/inception.png", "rb").read()
             yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
             yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
-            idx += 1
+        time.sleep(15)
         if idx == 1:
             im = open("/mnt/flask/adf_drawio.png", "rb").read()
             yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
             yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
-            idx -= 1
-
-        print("Do nothing")
 
 
 @app.route("/slideshow")
