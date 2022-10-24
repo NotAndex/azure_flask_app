@@ -32,15 +32,15 @@ def gen(path_string: str):
         print("Do nothing")
 
 
-@app.route("/")
-def test():
+@app.route("/slideshow'")
+def slideshow():
     return Response(gen("/mnt/flask"), mimetype="multipart/x-mixed-replace; boundary=frame")
     # return Response(gen(r"C:\Users\Andreas\Pictures\flask"), mimetype="multipart/x-mixed-replace; boundary=frame")
 
 
-# @app.route("/")
-# def index():
-#     return "<html><head></head><body><h1>slideshow</h1><img src='/slideshow' style='width: 90%; height: 90%;'/>" "</body></html>"
+@app.route("/")
+def index():
+    return "<html><head></head><body><h1>slideshow</h1><img src='/slideshow' style='width: 90%; height: 90%;'/>" "</body></html>"
 
 
 if __name__ == "__main__":
