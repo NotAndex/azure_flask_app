@@ -27,8 +27,8 @@ class CustomHandler(FileSystemEventHandler):
 
 def main():
     # get current path as absolute, linux-style path.
-    # working_path = Path("/mnt/flask").as_posix()
-    working_path = Path(r"C:\Users\Andreas\Pictures\GitHub-Mark\PNG").as_posix()
+    working_path = Path("/mnt/flask").as_posix()
+    # working_path = Path(r"C:\Users\Andreas\Pictures\GitHub-Mark\PNG").as_posix()
 
     # create instance of observer and CustomHandler
     observer = Observer()
