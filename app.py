@@ -40,7 +40,7 @@ def main():
 
     try:
         while True:
-            time.sleep(5)
+            time.sleep(20)
             print(f"Image to yield == {len(handler.path_strings)}")
             if len(handler.path_strings):
                 im = open(handler.path_strings.pop(), "rb").read()
