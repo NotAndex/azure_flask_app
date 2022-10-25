@@ -7,74 +7,75 @@ from watchdog.observers.polling import PollingObserver as Observer
 from watchdog.events import FileSystemEventHandler, DirCreatedEvent, FileCreatedEvent, FileSystemMovedEvent
 
 
-def main():
+app = Flask(__name__)
 
-    app = Flask(__name__)
 
-    class CustomHandler(FileSystemEventHandler):
-        """Custom handler for Watchdog"""
+class CustomHandler(FileSystemEventHandler):
+    """Custom handler for Watchdog"""
 
-        def __init__(self):
-            # List to store path
-            self.path_strings = []
+    def __init__(self):
+        # List to store path
+        self.path_strings = []
 
-        # callback for File/Directory created event, called by Observer.
-        def on_created(self, event: FileSystemMovedEvent):
+    # callback for File/Directory created event, called by Observer.
+    def on_created(self, event: FileSystemMovedEvent):
 
-            self.path_strings.append(Path(event.src_path).as_posix())
+        self.path_strings.append(Path(event.src_path).as_posix())
 
-            print(f"Path content: \n{self.path_strings}")
+        print(f"Path content: \n{self.path_strings}")
 
+
+def gen():
+    try:
+        while True:
+            time.sleep(5)
+            print(f"Image to yield == {len(handler.path_strings)} Time: {datetime.now()}")
+            if len(handler.path_strings):
+                im = open(handler.path_strings.pop(), "rb").read()
+                print(f"After read {handler.path_strings}")
+                # for i in range(2):  # IDK why this double yield is needed
+                #     print(f"loop: {i}")
+                yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
+                yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
+            # else:
+            #     im = open("/mnt/flask/inception.png", "rb").read()
+            #     # for i in range(2):  # IDK why this double yield is needed
+            #     #     print(f"loop: {i}")
+            #     yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
+            #     yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
+
+    except KeyboardInterrupt:
+        observer.stop()
+    observer.join()
+
+
+@app.route("/")
+def index():
     working_path = Path("/mnt/flask").as_posix()
     # working_path = Path(r"C:\Users\Andreas\Pictures\GitHub-Mark\PNG").as_posix()
 
     # create instance of observer and CustomHandler
+    global observer
+    global handler
     observer = Observer()
     handler = CustomHandler()
 
     # start observer, checks files recursively
     observer.schedule(handler, path=working_path, recursive=False)
-
-    def gen():
-        try:
-            while True:
-                time.sleep(5)
-                print(f"Image to yield == {len(handler.path_strings)} Time: {datetime.now()}")
-                if len(handler.path_strings):
-                    im = open(handler.path_strings.pop(), "rb").read()
-                    print(f"After read {handler.path_strings}")
-                    # for i in range(2):  # IDK why this double yield is needed
-                    #     print(f"loop: {i}")
-                    yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
-                    yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
-                # else:
-                #     im = open("/mnt/flask/inception.png", "rb").read()
-                #     # for i in range(2):  # IDK why this double yield is needed
-                #     #     print(f"loop: {i}")
-                #     yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
-                #     yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
-
-        except KeyboardInterrupt:
-            observer.stop()
-        observer.join()
-
-    @app.route("/slideshow")
-    def slideshow():
-
-        return Response(gen(), mimetype="multipart/x-mixed-replace; boundary=frame")
-
-    @app.route("/")
-    def index():
-        return render_template("index_old1.html")
-
     observer.start()
     print("observer started")
+    return render_template("index.html")
 
-    # app.run(threaded=True)
-    app.run()
+
+@app.route("/slideshow")
+def slideshow():
+    return Response(gen(), mimetype="multipart/x-mixed-replace; boundary=frame")
+
+
+# app.run(threaded=True)
 
 
 if __name__ == "__main__":
     # get current path as absolute, linux-style path.
 
-    main()
+    app.run()
