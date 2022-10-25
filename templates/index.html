@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        .column {
+            float: left;
+            width: 33.33%;
+            padding: 5px;
+        }
+
+        /* Clearfix (clear floats) */
+        .row::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Simple Dashboard with Automatically Updating Content</h2>
+    <p>This is what I call 90s style!!!</p>
+
+    <div class="row1">
+        <div class="column">
+            <img src='/slideshow' alt="Snow" style="width:100%">
+        </div>
+        <div class="column">
+            <img src='/slideshow' alt="Forest" style="width:100%">
+        </div>
+        <div class="column">
+            <img src='/slideshow' alt="Mountains" style="width:100%">
+        </div>
+    </div>
+    <div class="row">
+        <div class="column">
+            <img src='/slideshow' alt="Snow" style="width:100%">
+        </div>
+        <div class="column">
+            <img src='/slideshow' alt="Forest" style="width:100%">
+        </div>
+        <div class="column">
+            <img src='/slideshow' alt="Mountains" style="width:100%">
+        </div>
+    </div>
+
+</body>
+
+</html>

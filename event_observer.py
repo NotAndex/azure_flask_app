@@ -26,19 +26,6 @@ class CustomHandler(FileSystemEventHandler):
 
 
 def main():
-    # get current path as absolute, linux-style path.
-    # working_path = Path("/mnt/flask").as_posix()
-    working_path = Path(r"C:\Users\Andreas\Pictures\GitHub-Mark\PNG").as_posix()
-
-    # create instance of observer and CustomHandler
-    observer = Observer()
-    handler = CustomHandler()
-
-    # start observer, checks files recursively
-    observer.schedule(handler, path=working_path, recursive=False)
-    observer.start()
-    print("observer started")
-
     try:
         while True:
             time.sleep(10)
@@ -56,7 +43,6 @@ def main():
             #     #     print(f"loop: {i}")
             #     yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
             #     yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
-
     except KeyboardInterrupt:
         observer.stop()
     observer.join()
@@ -64,15 +50,27 @@ def main():
 
 @app.route("/slideshow")
 def slideshow():
-
     return Response(main(), mimetype="multipart/x-mixed-replace; boundary=frame")
 
 
 @app.route("/")
 def index():
-    return "<html><head></head><body><h1>slideshow</h1><img src='/slideshow' style='width: 90%; height: 90%;'/>" "</body></html>"
+    # return "<html><head></head><body><h1>slideshow</h1><img src='/slideshow' style='width: 90%; height: 90%;'/>" "</body></html>"
+    return render_template("index.html")
 
 
 if __name__ == "__main__":
     # app.run(threaded=True)
+    # get current path as absolute, linux-style path.
+    # working_path = Path("/mnt/flask").as_posix()
+    working_path = Path(r"C:\Users\Andreas\Pictures\GitHub-Mark\PNG").as_posix()
+
+    # create instance of observer and CustomHandler
+    observer = Observer()
+    handler = CustomHandler()
+    # start observer, checks files recursively
+    observer.schedule(handler, path=working_path, recursive=False)
+    observer.start()
+
+    print("observer started")
     app.run()
