@@ -56,7 +56,7 @@ def slideshow():
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index_old1.html")
 
 
 if __name__ == "__main__":
