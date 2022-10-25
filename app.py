@@ -24,6 +24,17 @@ class CustomHandler(FileSystemEventHandler):
         print(f"Path content: \n{self.path_strings}")
 
 
+working_path = Path("/mnt/flask").as_posix()
+# working_path = Path(r"C:\Users\Andreas\Pictures\GitHub-Mark\PNG").as_posix()
+
+# create instance of observer and CustomHandler
+observer = Observer()
+handler = CustomHandler()
+
+# start observer, checks files recursively
+observer.schedule(handler, path=working_path, recursive=False)
+
+
 def gen():
     try:
         while True:
@@ -61,15 +72,7 @@ def index():
 
 if __name__ == "__main__":
     # get current path as absolute, linux-style path.
-    working_path = Path("/mnt/flask").as_posix()
-    # working_path = Path(r"C:\Users\Andreas\Pictures\GitHub-Mark\PNG").as_posix()
 
-    # create instance of observer and CustomHandler
-    observer = Observer()
-    handler = CustomHandler()
-
-    # start observer, checks files recursively
-    observer.schedule(handler, path=working_path, recursive=False)
     observer.start()
     print("observer started")
 
