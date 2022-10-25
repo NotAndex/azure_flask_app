@@ -18,7 +18,7 @@ class CustomHandler(FileSystemEventHandler):
         self.path_strings = []
 
     # callback for File/Directory created event, called by Observer.
-    def on_created(self, event: FileSystemMovedEvent):
+    def on_created(self, event: FileCreatedEvent):  # <-- Check for created Event because it is polling anyways
 
         self.path_strings.append(Path(event.src_path).as_posix())
 
@@ -37,12 +37,6 @@ def gen():
                 #     print(f"loop: {i}")
                 yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
                 yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
-            # else:
-            #     im = open("/mnt/flask/inception.png", "rb").read()
-            #     # for i in range(2):  # IDK why this double yield is needed
-            #     #     print(f"loop: {i}")
-            #     yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
-            #     yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + im + b"\r\n")
 
     except KeyboardInterrupt:
         observer.stop()
@@ -52,9 +46,8 @@ def gen():
 @app.route("/")
 def index():
     working_path = Path("/mnt/flask").as_posix()
-    # working_path = Path(r"C:\Users\Andreas\Pictures\GitHub-Mark\PNG").as_posix()
 
-    # create instance of observer and CustomHandler
+    # create instance of observer and CustomHandler for each
     global observer
     global handler
     observer = Observer()
@@ -72,10 +65,6 @@ def slideshow():
     return Response(gen(), mimetype="multipart/x-mixed-replace; boundary=frame")
 
 
-# app.run(threaded=True)
-
-
 if __name__ == "__main__":
-    # get current path as absolute, linux-style path.
-
     app.run()
+    # app.run(threaded=True)
